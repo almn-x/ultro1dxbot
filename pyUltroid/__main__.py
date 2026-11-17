@@ -1,3 +1,24 @@
+# need this code for render service 
+import os, threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
+
+class _H(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200); self.end_headers()
+        self.wfile.write(b"Ultroid OK")
+    def log_message(self, *a): pass
+
+def _serve():
+    HTTPServer(("0.0.0.0", int(os.environ.get("PORT", 8080))), _H).serve_forever()
+
+threading.Thread(target=_serve, daemon=True).start()
+# session string encryption/decryption code
+from cryptography.fernet import Fernet
+
+if os.environ.get("SESSION_ENCRYPTION_KEY") and os.environ.get("SESSION"):
+    _f = Fernet(os.environ["SESSION_ENCRYPTION_KEY"].encode())
+    os.environ["SESSION"] = _f.decrypt(os.environ["SESSION"].encode()).decode()
+# encrypted decryption code done
 # Ultroid - UserBot
 # Copyright (C) 2021-2026 TeamUltroid
 #
